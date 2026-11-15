@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.application'
+}
+
+def appVersionName = project.findProperty('appVersionName') ?: '1.0.0'
+def appVersionCode = (project.findProperty('appVersionCode') ?: '1').toInteger()
+
+android {
+    namespace 'com.mrxalc0h0lic.mashaeirgame'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.mrxalc0h0lic.mashaeirgame'
+        minSdk 23
+        targetSdk 34
+        versionCode appVersionCode
+        versionName appVersionName
+    }
+}
+
+tasks.register('copyGamePage', Copy) {
+    from(rootProject.file('../index.html'))
+    into(layout.projectDirectory.dir('src/main/assets'))
+    rename { 'index.html' }
+}
+
+tasks.named('preBuild').configure {
+    dependsOn 'copyGamePage'
+}
