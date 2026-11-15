@@ -1,0 +1,98 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Optional existing vX.Y.Z tag to rebuild and attach its APK (for example, v1.0.0)'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Set app version
+        env:
+          RELEASE_TAG_INPUT: ${{ inputs.release_tag }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            release_tag="$GITHUB_REF_NAME"
+          elif [[ -n "$RELEASE_TAG_INPUT" ]]; then
+            release_tag="$RELEASE_TAG_INPUT"
+          else
+            release_tag=""
+          fi
+
+          if [[ -n "$release_tag" ]]; then
+            if [[ ! "$release_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Use release tags like v1.0.0" >&2
+              exit 1
+            fi
+            version="${release_tag#v}"
+            IFS=. read -r major minor patch <<< "$version"
+            if (( major > 2000 || minor > 999 || patch > 999 )); then
+              echo "Version components exceed the APK version-code range" >&2
+              exit 1
+            fi
+            code=$((major * 1000000 + minor * 1000 + patch))
+            echo "APP_RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
+            echo "APP_VERSION_NAME=$version" >> "$GITHUB_ENV"
+            echo "APP_VERSION_CODE=$code" >> "$GITHUB_ENV"
+          else
+            echo "APP_RELEASE_TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+            echo "APP_VERSION_NAME=1.0.0-dev.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+            echo "APP_VERSION_CODE=$((1000000 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build APK
+        run: gradle --no-daemon -p android -PappVersionName="$APP_VERSION_NAME" -PappVersionCode="$APP_VERSION_CODE" assembleDebug
+
+      - name: Name APK for this run
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk "Mashaeir-${APP_RELEASE_TAG}.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mashaeir-Android-${{ inputs.release_tag || github.ref_name }}
+          path: Mashaeir-${{ inputs.release_tag || github.ref_name }}.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish APK to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          files: Mashaeir-${{ inputs.release_tag || github.ref_name }}.apk
+          fail_on_unmatched_files: true
