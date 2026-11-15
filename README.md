@@ -58,11 +58,11 @@
 
 | الفئة | الأيقونة | عدد الأسئلة |
 |---|:---:|---:|
-| الحب والعلاقة | ❤️ | 130
-| المستقبل والأحلام | 🌙 | 130
-| مرح وضحك | 😄 | 130
-| أسئلة عميقة | 🌹 | 130
-| الحياة اليومية | ☀️ | 130
+| الحب والعلاقة | ❤️ | 130 |
+| المستقبل والأحلام | 🌙 | 130 |
+| مرح وضحك | 😄 | 130 |
+| أسئلة عميقة | 🌹 | 130 |
+| الحياة اليومية | ☀️ | 130 |
 | **الإجمالي** | 💝 | **650** |
 
 ## 🖼️ لقطات من اللعبة
@@ -103,7 +103,9 @@ git clone https://github.com/MRxAlc0h0lic/Mashaeir-game.git
 
 ## 📱 تحميل تطبيق Android (APK)
 
-يمكن تنزيل نسخة Android الحالية (v1.0.0) من [صفحة الإصدار](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases/tag/v1.0.0)، أو [تنزيل ملف APK مباشرة](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases/download/v1.0.0/Mashaeir-v1.0.0.apk). عند توفر تحديث، افتحوا صفحة [Releases](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases) لاختيار أحدث إصدار. يُبنى التطبيق تلقائيًا من صفحة اللعبة نفسها داخل WebView؛ وتعمل اللعبة دون اتصال بالإنترنت، بينما قد تحتاج الخطوط إلى اتصال لتحميلها.
+يمكن تنزيل نسخة Android الحالية (v1.0.0) من [صفحة الإصدار](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases/tag/v1.0.0)، أو [تنزيل ملف APK مباشرة](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases/download/v1.0.0/Mashaeir-v1.0.0.apk).
+
+عند توفر تحديث، افتحوا صفحة [Releases](https://github.com/MRxAlc0h0lic/Mashaeir-Game-Mobile/releases) لاختيار أحدث إصدار. يُبنى التطبيق تلقائيًا من صفحة اللعبة نفسها داخل WebView. تعمل اللعبة دون اتصال بالإنترنت، بينما قد تحتاج الخطوط إلى اتصال لتحميلها.
 
 ### إنشاء إصدار جديد
 
